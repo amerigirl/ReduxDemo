@@ -1,5 +1,7 @@
 const redux = require("redux");
 const { configureStore } = require("@reduxjs/toolkit");
+const produce = require('immer').produce
+
 
 const initialState = {
   name: "Be-Asia",
@@ -24,13 +26,16 @@ const updateStreet = (street) => {
 const updateStreetReducer = (state = initialState, action) => {
   switch (action.type) {
     case STREET_UPDATED:
-      return {
-        ...state,
-        address: {
-          ...state.address,
-          street: action.payload,
-        },
-      };
+    //   return {
+    //     ...state,
+    //     address: {
+    //       ...state.address,
+    //       street: action.payload,
+    //     },
+    //   };
+    return produce(state, (draft)=> {
+        draft.address.street = action.payload
+    })
     default:
       return state;
   }

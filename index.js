@@ -2,6 +2,10 @@ const redux = require("redux");
 const { configureStore } = require("@reduxjs/toolkit");
 const bindActionCreators = redux.bindActionCreators;
 const combineReducers = redux.combineReducers;
+const applyMiddleware = redux.applyMiddleware;
+
+const reduxLogger = require("redux-logger");
+const logger = reduxLogger.createLogger();
 
 //const action type
 const CAKE_ORDERED = "CAKE_ORDERED";
@@ -61,7 +65,7 @@ const cakeReducer = (state = initialCakeState, action) => {
         ...state,
         numOfCakes: state.numOfCakes + action.payload,
       };
-    default: 
+    default:
       return state;
   }
 };
@@ -87,15 +91,20 @@ const iceCreamReducer = (state = initialIceCreamState, action) => {
 //combining reducers
 const rootReducer = combineReducers({
   cake: cakeReducer,
-  iceCream: iceCreamReducer
-})
+  iceCream: iceCreamReducer,
+});
 
+// Configure store
+const store = configureStore({
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+});
 
-const store = configureStore({reducer: rootReducer});
-console.log("initialState", store.getState());
+// Subscription
 const unsubscribe = store.subscribe(() =>
-  console.log("updated state", store.getState())
+  console.log("Updated state:", store.getState())
 );
+
 // store.dispatch(orderCake());
 // store.dispatch(orderCake());
 // store.dispatch(orderCake());
