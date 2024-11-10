@@ -2,7 +2,6 @@ const redux = require("redux");
 const { configureStore } = require("@reduxjs/toolkit");
 const bindActionCreators = redux.bindActionCreators;
 const combineReducers = redux.combineReducers;
-const applyMiddleware = redux.applyMiddleware;
 
 const reduxLogger = require("redux-logger");
 const logger = reduxLogger.createLogger();
@@ -40,11 +39,6 @@ function restockCake(payload = 1) {
   };
 }
 
-// const initialState = {
-//   numOfCakes: 10,
-//   numOfIceCreams: 20
-// };
-
 const initialCakeState = {
   numOfCakes: 10,
 };
@@ -53,6 +47,7 @@ const initialIceCreamState = {
   numOfIceCreams: 20,
 };
 
+//Reducer
 const cakeReducer = (state = initialCakeState, action) => {
   switch (action.type) {
     case CAKE_ORDERED:
