@@ -1,5 +1,7 @@
 const redux = require("redux");
 const { configureStore } = require("@reduxjs/toolkit");
+const { thunk } = require("redux-thunk");
+const axios = require("axios");
 
 initialState = {
   loading: false,
@@ -56,4 +58,40 @@ const reducer = (state = initialState, action) => {
   }
 };
 
-const store = configureStore({reducer})
+const fetchUsers = () => {
+  return function (dispatch) {
+    dispatch(fetchUsersRequest());
+    axios
+      .get("https://jsonplaceholder.typicode.com/users")
+      .then((response) => {
+        const users = response.data.map((user) => user.id);
+        dispatch(fetchUsersSuccess(users));
+      })
+      .catch((error) => {
+        dispatch(fetchUsersFailure(error.message));
+      });
+  };
+};
+
+const store = configureStore({
+  reducer,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
+});
+store.subscribe(() => {
+  console.log(store.getState());
+});
+store.dispatch(fetchUsers());
+
+//this keeps the terminal open until you hit enter--it closes too fast!
+const readline = require("readline");
+const { type } = require("os");
+const { clear } = require("console");
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+rl.question("Press Enter to exit...", () => {
+  rl.close();
+});
+
